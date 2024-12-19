@@ -32,7 +32,7 @@ A Flask-based web application that provides detailed information about the clien
 1. Clone the repository: 
 
 ```bash
-git clone https://github.com/yourusername/browser-info-display.git
+git clone https://github.com/iocseb/ip-analyzer
 cd browser-info-display
 ```
 
