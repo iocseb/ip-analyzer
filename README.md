@@ -33,7 +33,7 @@ A Flask-based web application that provides detailed information about the clien
 
 ```bash
 git clone https://github.com/iocseb/ip-analyzer
-cd browser-info-display
+cd ip-analyzer
 ```
 
 2. Create a virtual environment:
