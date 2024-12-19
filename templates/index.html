@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="theme-toggle">
+        <button onclick="toggleTheme()" class="theme-button">
+            <span class="light-icon">☀️</span>
+            <span class="dark-icon">🌙</span>
+        </button>
+    </div>
+    <div class="container">
+        <section class="info-section">
+            <h2>IP Address & Geolocation</h2>
+            <div class="ip-container">
+                <p><strong>IP Address:</strong> <span id="ip-address">{{ ip }}</span></p>
+                <button onclick="copyIP()" class="copy-button">
+                    <span class="tooltip">Copy IP</span>
+                    📋
+                </button>
+            </div>
+            {% if geo_data.get('error') %}
+                <p class="error">Error: {{ geo_data.error }}</p>
+            {% elif geo_data.get('info') %}
+                <p class="info">{{ geo_data.info }}</p>
+            {% else %}
+                <p><strong>City:</strong> {{ geo_data.get('city', 'N/A') }}</p>
+                <p><strong>Region:</strong> {{ geo_data.get('regionName', 'N/A') }}</p>
+                <p><strong>Country:</strong> {{ geo_data.get('country', 'N/A') }}</p>
+                <p><strong>Latitude:</strong> {{ geo_data.get('lat', 'N/A') }}</p>
+                <p><strong>Longitude:</strong> {{ geo_data.get('lon', 'N/A') }}</p>
+                <p><strong>ISP:</strong> {{ geo_data.get('isp', 'N/A') }}</p>
+                <p><strong>ASN:</strong> {{ geo_data.get('as', 'N/A') }}</p>
+            {% endif %}
+        </section>
+
+        <section class="info-section">
+            <h2>Browser & Request Details</h2>
+            <div class="subsection">
+                <h3>User Agent Information</h3>
+                <p><strong>Raw User Agent:</strong> {{ user_agent }}</p>
+                <p><strong>Browser:</strong> {{ ua_details.browser.family }} {{ ua_details.browser.version_string }}</p>
+                <p><strong>OS:</strong> {{ ua_details.os.family }} {{ ua_details.os.version_string }}</p>
+                <p><strong>Device:</strong> {{ ua_details.device.family }}</p>
+                <p><strong>Is Mobile:</strong> {{ ua_details.is_mobile }}</p>
+                <p><strong>Is Tablet:</strong> {{ ua_details.is_tablet }}</p>
+                <p><strong>Is PC:</strong> {{ ua_details.is_pc }}</p>
+            </div>
+            
+            <div class="subsection">
+                <h3>All Request Headers</h3>
+                <div class="headers">
+                    {% for header, value in headers.items() %}
+                        <p><strong>{{ header }}:</strong> {{ value }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        function copyIP() {
+            const ip = document.getElementById('ip-address').textContent;
+            navigator.clipboard.writeText(ip).then(() => {
+                const button = document.querySelector('.copy-button');
+                const tooltip = button.querySelector('.tooltip');
+                tooltip.textContent = 'Copied!';
+                setTimeout(() => {
+                    tooltip.textContent = 'Copy IP';
+                }, 2000);
+            });
+        }
+
+        // Theme toggling functionality
+        function toggleTheme() {
+            if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Set initial theme based on system preference or stored preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        });
+    </script>
+</body>
+</html> 
