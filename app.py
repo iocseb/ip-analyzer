@@ -14,14 +14,10 @@ def is_private_ip(ip):
 
 @app.route('/')
 def index():
-    # Override IP for testing
-    ip = "135.180.150.115"
-    
-    # The following code is now skipped for testing
-    # if request.headers.get('X-Forwarded-For'):
-    #     ip = request.headers.get('X-Forwarded-For').split(',')[0]
-    # else:
-    #     ip = request.remote_addr
+    if request.headers.get('X-Forwarded-For'):
+        ip = request.headers.get('X-Forwarded-For').split(',')[0]
+    else:
+        ip = request.remote_addr
     
     # Parse user agent
     user_agent = str(request.user_agent)
